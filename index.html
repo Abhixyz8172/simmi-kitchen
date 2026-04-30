@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simmi's Kitchen | Professional Recipes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #60A5FA;
+      --primary-glow: #3B82F6;
+      --bg: #0A0E1A;
+      --bg2: #0F1629;
+      --surface: #131C35;
+      --surface2: #1A2540;
+      --text: #E8F0FF;
+      --muted: #7B90C4;
+      --border: #1E2D50;
+      --green: #34D399;
+      --green-bg: #0D2B22;
+      --radius: 14px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% -20%, rgba(59,130,246,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 80%, rgba(96,165,250,0.07) 0%, transparent 50%);
+    }
+    .container { max-width: 760px; margin: 0 auto; padding: 2.5rem 1rem 5rem; }
+    .header { text-align: center; margin-bottom: 2.5rem; }
+    .header-logo {
+      width: 72px; height: 72px; margin: 0 auto 1rem;
+      background: linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 34px;
+      box-shadow: 0 0 30px rgba(59,130,246,0.35), var(--shadow);
+      border: 1.5px solid rgba(96,165,250,0.3);
+    }
+    .header h1 {
+      font-size: 30px; font-weight: 700;
+      background: linear-gradient(90deg, #93C5FD, #60A5FA, #BAE6FD);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .header p { font-size: 15px; color: var(--muted); margin-top: 8px; }
+    
+    /* API Setup Block - Code me key set hai toh ye automatic hide ho jayega script me */
+    .api-setup {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+      border: 1px solid rgba(96,165,250,0.2); box-shadow: var(--shadow);
+    }
+    .api-setup p { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+    .api-setup p a { color: var(--primary); text-decoration: none; }
+    .api-row { display: flex; gap: 8px; }
+    .api-row input {
+      flex: 1; padding: 10px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg2);
+      font-size: 13px; color: var(--text); outline: none;
+    }
+    .api-row input:focus { border-color: var(--primary); }
+    .api-row button {
+      padding: 10px 18px; border-radius: 8px; border: none;
+      background: var(--primary-glow); color: #fff;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .search-area {
+      display: flex; gap: 10px; margin-bottom: 1.25rem;
+      background: var(--surface); padding: 10px;
+      border-radius: 16px; border: 1px solid rgba(96,165,250,0.2);
+      box-shadow: var(--shadow);
+    }
+    .search-area input {
+      flex: 1; padding: 13px 18px; border: none; background: transparent;
+      font-size: 15px; outline: none; color: var(--text);
+    }
+    .search-area input::placeholder { color: var(--muted); }
+    .search-area button {
+      padding: 13px 26px; border-radius: 10px; border: none;
+      background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+      color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(59,130,246,0.35);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2.5rem; justify-content: center; }
+    .chip {
+      padding: 7px 16px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border);
+      font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; transition: 0.2s;
+    }
+    .chip:hover { background: rgba(59,130,246,0.2); color: var(--primary); border-color: var(--primary); }
+
+    /* Suggestions panel */
+    .suggest-panel {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;
+      border: 1px solid rgba(96,165,250,0.25); box-shadow: var(--shadow);
+    }
+    .suggest-panel h4 { color: var(--primary); font-size: 13px; margin-bottom: 12px; font-weight: 600; }
+    .suggest-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .suggest-btn {
+      padding: 8px 16px; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--text); font-size: 13px;
+      cursor: pointer; transition: 0.2s; font-weight: 500;
+    }
+    .suggest-btn:hover { background: rgba(59,130,246,0.25); border-color: var(--primary); color: var(--primary); }
+
+    .simmi-bubble {
+      background: var(--surface); border-radius: var(--radius);
+      padding: 1.5rem; margin-bottom: 1.5rem;
+      border-left: 4px solid var(--primary); box-shadow: var(--shadow);
+    }
+    .simmi-bubble h4 { color: var(--primary); font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+    .simmi-bubble p { font-size: 16px; color: var(--text); font-weight: 500; }
+    .recipe-card {
+      background: var(--surface); border-radius: 18px;
+      box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border);
+    }
+    
+    /* 📸 NAYA PHOTO STYLE */
+    .recipe-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover; /* Photo crop hoke fit hogi stretch nahi */
+      border-bottom: 1px solid var(--border);
+      display: none; /* Pehle chhupi rahegi jab tak load na ho */
+    }
+
+    .recipe-header {
+      padding: 2rem; border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+    }
+    .recipe-header h2 { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+    .recipe-meta { display: flex; gap: 20px; font-size: 14px; color: var(--muted); font-weight: 500; }
+    .recipe-body { padding: 2rem; }
+    .section-title {
+      font-size: 17px; font-weight: 700; color: var(--text);
+      margin: 0 0 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .ing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 2.5rem; }
+    .ing-item {
+      background: var(--bg2); padding: 10px 14px; border-radius: 8px;
+      font-size: 13px; font-weight: 500; color: var(--text); border: 1px solid var(--border);
+    }
+    .step { display: flex; gap: 16px; margin-bottom: 20px; }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(59,130,246,0.15); color: var(--primary);
+      border: 2px solid var(--primary-glow); font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-text { font-size: 15px; color: #C8D9F5; padding-top: 4px; line-height: 1.7; }
+    .tip-box {
+      background: var(--green-bg); border-radius: var(--radius); padding: 1.5rem;
+      margin-top: 2rem; border: 1px solid rgba(52,211,153,0.25); display: flex; gap: 14px;
+    }
+    .tip-icon { font-size: 24px; }
+    .tip-content h4 { color: var(--green); margin-bottom: 4px; font-size: 14px; font-weight: 700; }
+    .tip-content p { color: #6EE7B7; font-size: 14px; }
+    .state-message { text-align: center; padding: 4rem 2rem; color: var(--muted); font-size: 16px; }
+    .loading-spinner { font-size: 28px; display: inline-block; animation: spin 1s linear infinite; margin-bottom: 12px; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .error-msg {
+      color: #FCA5A5; background: rgba(220,38,38,0.1); padding: 1.25rem;
+      border-radius: 10px; text-align: center; font-weight: 500;
+      border: 1px solid rgba(220,38,38,0.25);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="header-logo">👩‍🍳</div>
+    <h1>Simmi's Kitchen</h1>
+    <p>Premium Recipes & Step-by-Step Cooking Guides</p>
+  </div>
+
+  <div class="api-setup" id="apiSetup">
+    <p>🔑 Apni <a href="https://aistudio.google.com/app/apikey" target="_blank">Free Google Gemini API Key</a> daalo:</p>
+    <div class="api-row">
+      <input type="password" id="apiKeyInput" placeholder="AIzaSy..." />
+      <button onclick="saveKey()">Save Key</button>
+    </div>
+  </div>
+
+  <div class="search-area">
+    <input type="text" id="dishInput" placeholder="Kuch bhi likho — paneer, chicken, aloo, rice..." />
+    <button onclick="handleSearch()">Search ✦</button>
+  </div>
+
+  <div class="chips">
+    <span class="chip" onclick="directRecipe('Dal Makhani')">Dal Makhani</span>
+    <span class="chip" onclick="directRecipe('Hyderabadi Biryani')">Hyderabadi Biryani</span>
+    <span class="chip" onclick="directRecipe('Butter Chicken')">Butter Chicken</span>
+    <span class="chip" onclick="directRecipe('Paneer Lababdar')">Paneer Lababdar</span>
+    <span class="chip" onclick="directRecipe('Gajar Ka Halwa')">Gajar Ka Halwa</span>
+    <span class="chip" onclick="directRecipe('Chole Bhature')">Chole Bhature</span>
+    <span class="chip" onclick="directRecipe('Aloo Paratha')">Aloo Paratha</span>
+  </div>
+
+  <div id="resultArea">
+    <div class="state-message">Kuch bhi likho — "paneer", "chicken", "aloo" — Simmi suggest karegi! ✦</div>
+  </div>
+</div>
+
+<script>
+  // ⛔️ SECURITY WARNING: Internet pe publicly host karne se pehle ye key hata lena.
+  // Testing ke liye apni key yahan quotes me paste kar do, UI hide ho jayega:
+  let API_KEY = 'AIzaSyBwlycj_9swZNnN3K3WG0wavPLwYAEwuSc'; 
+
+  // Agar upar API_KEY manually set ki hai, toh setup box ko chhupa do
+  if (API_KEY && API_KEY !== "localStorage.getItem('simmi_gemini_api_key') || ''") {
+     const setupBox = document.getElementById('apiSetup');
+     if(setupBox) setupBox.style.display = 'none';
+  } else if (API_KEY) {
+      // LocalStorage wali key set hai
+    document.getElementById('apiSetup').innerHTML =
+      '<p style="color:#34D399;font-size:14px;font-weight:500;">✅ Gemini API Key set hai. Koi bhi dish search karo! &nbsp;<a href="#" onclick="resetKey();return false;" style="color:#7B90C4;font-size:12px;">Change karein</a></p>';
+  }
+
+  function saveKey() {
+    const val = document.getElementById('apiKeyInput').value.trim();
+    if (!val) return;
+    API_KEY = val;
+    localStorage.setItem('simmi_gemini_api_key', API_KEY);
+    location.reload(); // Reload to apply changes and hide box if needed
+  }
+
+  function resetKey() {
+    localStorage.removeItem('simmi_gemini_api_key');
+    API_KEY = '';
+    location.reload();
+  }
+
+  document.getElementById('dishInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') handleSearch();
+  });
+
+  async function handleSearch() {
+    const query = document.getElementById('dishInput').value.trim();
+    if (!query) return;
+    if (!API_KEY) {
+      document.getElementById('resultArea').innerHTML =
+        '<div class="error-msg">Pehle upar apni Gemini API Key daalo aur Save karein!</div>';
+      return;
+    }
+
+    const area = document.getElementById('resultArea');
+    area.innerHTML = '<div class="state-message"><div class="loading-spinner">🍳</div><br>Simmi soch rahi hai...</div>';
+
+    // 📸 PROMPT UPDATED TO ASK FOR IMAGE URL
+    const checkPrompt = `User ne search kiya: "${query}"
+Kya ye ek complete dish name hai (jaise "Dal Makhani") ya sirf ek ingredient/keyword hai (jaise "paneer", "aloo")?
+Agar ye sirf ingredient hai, toh is ingredient se banne wali 5 popular Indian dishes ki list do.
+Agar ye complete dish name hai, toh seedha recipe do.
+
+Respond ONLY with this JSON (no extra text, no markdown block):
+If ingredient: {"type": "ingredient", "suggestions": ["Dish 1", "Dish 2", "Dish 3", "Dish 4", "Dish 5"]}
+If dish: {"type": "dish", "dish": "Full dish name", "image_url": "Suggest a real image URL of this dish from Wikimedia Commons or Unsplash. If you can't find one, suggest a relevant Wikimedia category image URL, or leave empty", "time": "e.g. 40 mins", "servings": "e.g. 4 people", "simmi_intro": "1-2 line warm Hinglish intro", "ingredients": ["200g butter"], "steps": ["Step 1", "Step 2"], "simmi_tip": "secret tip in Hinglish"}`;
+
+    try {
+      const data = await callGeminiAPI(checkPrompt);
+      const result = extractJSON(data);
+      if (!result) throw new Error("Response parse nahi hua, dobara try karein.");
+
+      if (result.type === 'ingredient') {
+        showSuggestions(query, result.suggestions);
+      } else {
+        renderRecipe(result);
+      }
+    } catch(e) {
+      area.innerHTML = `<div class="error-msg">⚠️ ${e.message}</div>`;
+    }
+  }
+
+  function showSuggestions(query, suggestions) {
+    const btns = suggestions.map(s =>
+      `<button class="suggest-btn" onclick="directRecipe('${s}')">${s}</button>`
+    ).join('');
+    document.getElementById('resultArea').innerHTML = `
+      <div class="suggest-panel">
+        <h4>👩‍🍳 Simmi boli — "${query}" se ye dishes banti hain, kaunsi banani hai?</h4>
+        <div class="suggest-grid">${btns}</div>
+      </div>`;
+  }
+
+  async function directRecipe(dishName) {
+    document.getElementById('dishInput').value = dishName;
+    if (!API_KEY) {
+      document.getElementById('resultArea').innerHTML =
+        '<div class="error-msg">Pehle upar apni Gemini API Key daalo!</div>';
+      return;
+    }
+
+    const area = document.getElementById('resultArea');
+    area.innerHTML = '<div class="state-message"><div class="loading-spinner">🍳</div><br>Chef Simmi recipe bana rahi hai...</div>';
+
+    // 📸 PROMPT UPDATED TO ASK FOR IMAGE URL
+    const prompt = `You are Chef Simmi, a warm Indian cooking expert. Make a complete recipe for: "${dishName}".
+Respond with ONLY this raw JSON object, no markdown, no explanation:
+{"dish": "full dish name", "image_url": "Suggest a real image URL of this dish from Wikimedia Commons or Unsplash Source (source.unsplash.com/featured/?dishname). If you can't guess a likely valid URL, leave empty", "time": "total time", "servings": "number of servings", "simmi_intro": "1-2 line warm Hinglish welcome", "ingredients": ["ingredient with quantity"], "steps": ["detailed step 1"], "simmi_tip": "one secret chef tip in Hinglish"}`;
+
+    try {
+      const data = await callGeminiAPI(prompt);
+      const recipe = extractJSON(data);
+      if (!recipe) throw new Error("Recipe parse nahi hua, dobara try karein.");
+      renderRecipe(recipe);
+    } catch(e) {
+      document.getElementById('resultArea').innerHTML = `<div class="error-msg">⚠️ ${e.message}</div>`;
+    }
+  }
+
+  // GEMINI API FUNCTION CALL (v1beta for version update compatibility)
+  async function callGeminiAPI(prompt) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          response_mime_type: "application/json" // Force strict JSON parsing
+        }
+      })
+    });
+    
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  function extractJSON(text) {
+    try { return JSON.parse(text); } catch(e) {}
+    const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (fenced) { try { return JSON.parse(fenced[1].trim()); } catch(e) {} }
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    if (start !== -1 && end !== -1) {
+      try { return JSON.parse(text.slice(start, end + 1)); } catch(e) {}
+    }
+    return null;
+  }
+
+  // 📸 RENDER RECIPE UPDATED FOR IMAGE
+  function renderRecipe(r) {
+    const ingsHTML = (r.ingredients || []).map(ing => `<div class="ing-item">• ${ing}</div>`).join('');
+    const stepsHTML = (r.steps || []).map((s, i) => `
+      <div class="step">
+        <div class="step-num">${i + 1}</div>
+        <div class="step-text">${s}</div>
+      </div>`).join('');
+
+    // Agar image URL hai, toh <img> tag banao, nahi toh khaali rakho
+    // onerror pe style.display='none' kiya hai, taaki agar broken link ho toh photo gayab ho jaye
+    const imageHTML = r.image_url ? 
+      `<img src="${r.image_url}" alt="${r.dish}" class="recipe-img" id="recipeImage" onerror="this.style.display='none'">` 
+      : '';
+
+    document.getElementById('resultArea').innerHTML = `
+      <div class="simmi-bubble">
+        <h4>👩‍🍳 Chef Simmi Says</h4>
+        <p>"${r.simmi_intro || ''}"</p>
+      </div>
+      <div class="recipe-card">
+        ${imageHTML} <!-- 📸 Photo yahan load hogi -->
+        <div class="recipe-header">
+          <h2>${r.dish || ''}</h2>
+          <div class="recipe-meta">
+            <span>⏱ ${r.time || ''}</span>
+            <span>🍽 ${r.servings || ''} Servings</span>
+          </div>
+        </div>
+        <div class="recipe-body">
+          <h3 class="section-title">Ingredients Required</h3>
+          <div class="ing-grid">${ingsHTML}</div>
+          <h3 class="section-title">Cooking Instructions</h3>
+          ${stepsHTML}
+          <div class="tip-box">
+            <div class="tip-icon">💡</div>
+            <div class="tip-content">
+              <h4>Chef's Secret Tip</h4>
+              <p>${r.simmi_tip || ''}</p>
+            </div>
+          </div>
+        </div>
+      </div>`;
+
+      // Agar photo hai, toh use slow load hone ke baad show karo (smooth effect)
+      const img = document.getElementById('recipeImage');
+      if(img) {
+          img.onload = function() {
+              this.style.display = 'block';
+          }
+      }
+  }
+</script>
+</body>
+</html>
