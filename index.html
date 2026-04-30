@@ -211,13 +211,14 @@
 <script>
   // ⛔️ SECURITY WARNING: Internet pe publicly host karne se pehle ye key hata lena.
   // Testing ke liye apni key yahan quotes me paste kar do, UI hide ho jayega:
-  let API_KEY = 'AIzaSyB_Hg3vSyfD01AjRCtY0WZzLAREY-SB05c';
+  let API_KEY = 'AIzaSyB_Hg3vSyfD01AjRCtY0WZzLAREY-SB05c'; 
 
   // Agar upar API_KEY manually set ki hai, toh setup box ko chhupa do
   if (API_KEY && API_KEY !== "localStorage.getItem('simmi_gemini_api_key') || ''") {
      const setupBox = document.getElementById('apiSetup');
      if(setupBox) setupBox.style.display = 'none';
   } else if (API_KEY) {
+    
       // LocalStorage wali key set hai
     document.getElementById('apiSetup').innerHTML =
       '<p style="color:#34D399;font-size:14px;font-weight:500;">✅ Gemini API Key set hai. Koi bhi dish search karo! &nbsp;<a href="#" onclick="resetKey();return false;" style="color:#7B90C4;font-size:12px;">Change karein</a></p>';
