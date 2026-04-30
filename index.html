@@ -180,13 +180,7 @@
     <p>Premium Recipes & Step-by-Step Cooking Guides</p>
   </div>
 
-  <div class="api-setup" id="apiSetup">
-    <p>🔑 Apni <a href="https://aistudio.google.com/app/apikey" target="_blank">Free Google Gemini API Key</a> daalo:</p>
-    <div class="api-row">
-      <input type="password" id="apiKeyInput" placeholder="AIzaSy..." />
-      <button onclick="saveKey()">Save Key</button>
-    </div>
-  </div>
+  
 
   <div class="search-area">
     <input type="text" id="dishInput" placeholder="Kuch bhi likho — paneer, chicken, aloo, rice..." />
@@ -209,37 +203,6 @@
 </div>
 
 <script>
-  // ⛔️ SECURITY WARNING: Internet pe publicly host karne se pehle ye key hata lena.
-  // Testing ke liye apni key yahan quotes me paste kar do, UI hide ho jayega:
-  // Purani key mita kar ye likho
- const API_KEY = 'AIzaSyBlRtStxMpctvZT1F3LdnYQFmB3CzdpDc4'; 
-
-  // Agar upar API_KEY manually set ki hai, toh setup box ko chhupa do
-  if (API_KEY && API_KEY !== "localStorage.getItem('simmi_gemini_api_key') || ''") {
-     const setupBox = document.getElementById('apiSetup');
-     if(setupBox) setupBox.style.display = 'none';
-  } else if (API_KEY) {
-
-
-      // LocalStorage wali key set hai
-    document.getElementById('apiSetup').innerHTML =
-      '<p style="color:#34D399;font-size:14px;font-weight:500;">✅ Gemini API Key set hai. Koi bhi dish search karo! &nbsp;<a href="#" onclick="resetKey();return false;" style="color:#7B90C4;font-size:12px;">Change karein</a></p>';
-  }
-
-  function saveKey() {
-    const val = document.getElementById('apiKeyInput').value.trim();
-    if (!val) return;
-    API_KEY = val;
-    localStorage.setItem('simmi_gemini_api_key', API_KEY);
-    location.reload(); // Reload to apply changes and hide box if needed
-  }
-
-  function resetKey() {
-    localStorage.removeItem('simmi_gemini_api_key');
-    API_KEY = '';
-    location.reload();
-  }
-
   document.getElementById('dishInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') handleSearch();
   });
@@ -247,37 +210,27 @@
   async function handleSearch() {
     const query = document.getElementById('dishInput').value.trim();
     if (!query) return;
-    if (!API_KEY) {
-      document.getElementById('resultArea').innerHTML =
-        '<div class="error-msg">Pehle upar apni Gemini API Key daalo aur Save karein!</div>';
-      return;
-    }
 
-    const area = document.getElementById('resultArea');
-    area.innerHTML = '<div class="state-message"><div class="loading-spinner">🍳</div><br>Simmi soch rahi hai...</div>';
+    document.getElementById('resultArea').innerHTML =
+      '<div class="state-message"><div class="loading-spinner">🍳</div><br>Simmi soch rahi hai...</div>';
 
-    // 📸 PROMPT UPDATED TO ASK FOR IMAGE URL
     const checkPrompt = `User ne search kiya: "${query}"
-Kya ye ek complete dish name hai (jaise "Dal Makhani") ya sirf ek ingredient/keyword hai (jaise "paneer", "aloo")?
-Agar ye sirf ingredient hai, toh is ingredient se banne wali 5 popular Indian dishes ki list do.
-Agar ye complete dish name hai, toh seedha recipe do.
+Agar ye ingredient hai toh 5 popular Indian dishes suggest karo.
+Agar ye dish hai toh recipe do.
 
-Respond ONLY with this JSON (no extra text, no markdown block):
-If ingredient: {"type": "ingredient", "suggestions": ["Dish 1", "Dish 2", "Dish 3", "Dish 4", "Dish 5"]}
-If dish: {"type": "dish", "dish": "Full dish name", "image_url": "Suggest a real image URL of this dish from Wikimedia Commons or Unsplash. If you can't find one, suggest a relevant Wikimedia category image URL, or leave empty", "time": "e.g. 40 mins", "servings": "e.g. 4 people", "simmi_intro": "1-2 line warm Hinglish intro", "ingredients": ["200g butter"], "steps": ["Step 1", "Step 2"], "simmi_tip": "secret tip in Hinglish"}`;
+Respond ONLY JSON:
+If ingredient: {"type":"ingredient","suggestions":["Dish 1","Dish 2","Dish 3","Dish 4","Dish 5"]}
+If dish: {"type":"dish","dish":"Full dish name","time":"40 mins","servings":"4 people","simmi_intro":"warm Hinglish intro","ingredients":["ingredient"],"steps":["step"],"simmi_tip":"tip"}`;
 
     try {
-      const data = await callGeminiAPI(checkPrompt);
-      const result = extractJSON(data);
-      if (!result) throw new Error("Response parse nahi hua, dobara try karein.");
-
+      const result = await callGeminiAPI(checkPrompt);
       if (result.type === 'ingredient') {
-        showSuggestions(query, result.suggestions);
+        showSuggestions(query, result.suggestions || []);
       } else {
         renderRecipe(result);
       }
     } catch(e) {
-      area.innerHTML = `<div class="error-msg">⚠️ ${e.message}</div>`;
+      document.getElementById('resultArea').innerHTML = `<div class="error-msg">⚠️ ${e.message}</div>`;
     }
   }
 
@@ -285,6 +238,7 @@ If dish: {"type": "dish", "dish": "Full dish name", "image_url": "Suggest a real
     const btns = suggestions.map(s =>
       `<button class="suggest-btn" onclick="directRecipe('${s}')">${s}</button>`
     ).join('');
+
     document.getElementById('resultArea').innerHTML = `
       <div class="suggest-panel">
         <h4>👩‍🍳 Simmi boli — "${query}" se ye dishes banti hain, kaunsi banani hai?</h4>
@@ -294,69 +248,38 @@ If dish: {"type": "dish", "dish": "Full dish name", "image_url": "Suggest a real
 
   async function directRecipe(dishName) {
     document.getElementById('dishInput').value = dishName;
-    if (!API_KEY) {
-      document.getElementById('resultArea').innerHTML =
-        '<div class="error-msg">Pehle upar apni Gemini API Key daalo!</div>';
-      return;
-    }
 
-    const area = document.getElementById('resultArea');
-    area.innerHTML = '<div class="state-message"><div class="loading-spinner">🍳</div><br>Chef Simmi recipe bana rahi hai...</div>';
+    document.getElementById('resultArea').innerHTML =
+      '<div class="state-message"><div class="loading-spinner">🍳</div><br>Chef Simmi recipe bana rahi hai...</div>';
 
-    // 📸 PROMPT UPDATED TO ASK FOR IMAGE URL
     const prompt = `You are Chef Simmi, a warm Indian cooking expert. Make a complete recipe for: "${dishName}".
-Respond with ONLY this raw JSON object, no markdown, no explanation:
-{"dish": "full dish name", "image_url": "Suggest a real image URL of this dish from Wikimedia Commons or Unsplash Source (source.unsplash.com/featured/?dishname). If you can't guess a likely valid URL, leave empty", "time": "total time", "servings": "number of servings", "simmi_intro": "1-2 line warm Hinglish welcome", "ingredients": ["ingredient with quantity"], "steps": ["detailed step 1"], "simmi_tip": "one secret chef tip in Hinglish"}`;
+Respond ONLY JSON:
+{"dish":"full dish name","time":"total time","servings":"number of servings","simmi_intro":"warm Hinglish welcome","ingredients":["ingredient with quantity"],"steps":["detailed step"],"simmi_tip":"one secret chef tip in Hinglish"}`;
 
     try {
-      const data = await callGeminiAPI(prompt);
-      const recipe = extractJSON(data);
-      if (!recipe) throw new Error("Recipe parse nahi hua, dobara try karein.");
+      const recipe = await callGeminiAPI(prompt);
       renderRecipe(recipe);
     } catch(e) {
       document.getElementById('resultArea').innerHTML = `<div class="error-msg">⚠️ ${e.message}</div>`;
     }
   }
 
-  // GEMINI API FUNCTION CALL (v1beta for version update compatibility)
   async function callGeminiAPI(prompt) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }],
-        generationConfig: {
-          response_mime_type: "application/json" // Force strict JSON parsing
-        }
-      })
+    const res = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
     });
-    
+
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || `HTTP ${res.status}`);
+      throw new Error(data.error || `Request failed: ${res.status}`);
     }
-    const data = await res.json();
-    return data.candidates[0].content.parts[0].text;
+
+    return data;
   }
 
-  function extractJSON(text) {
-    try { return JSON.parse(text); } catch(e) {}
-    const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (fenced) { try { return JSON.parse(fenced[1].trim()); } catch(e) {} }
-    const start = text.indexOf('{');
-    const end = text.lastIndexOf('}');
-    if (start !== -1 && end !== -1) {
-      try { return JSON.parse(text.slice(start, end + 1)); } catch(e) {}
-    }
-    return null;
-  }
-
-  // 📸 RENDER RECIPE UPDATED FOR IMAGE
   function renderRecipe(r) {
     const ingsHTML = (r.ingredients || []).map(ing => `<div class="ing-item">• ${ing}</div>`).join('');
     const stepsHTML = (r.steps || []).map((s, i) => `
@@ -365,19 +288,12 @@ Respond with ONLY this raw JSON object, no markdown, no explanation:
         <div class="step-text">${s}</div>
       </div>`).join('');
 
-    // Agar image URL hai, toh <img> tag banao, nahi toh khaali rakho
-    // onerror pe style.display='none' kiya hai, taaki agar broken link ho toh photo gayab ho jaye
-    const imageHTML = r.image_url ? 
-      `<img src="${r.image_url}" alt="${r.dish}" class="recipe-img" id="recipeImage" onerror="this.style.display='none'">` 
-      : '';
-
     document.getElementById('resultArea').innerHTML = `
       <div class="simmi-bubble">
         <h4>👩‍🍳 Chef Simmi Says</h4>
         <p>"${r.simmi_intro || ''}"</p>
       </div>
       <div class="recipe-card">
-        ${imageHTML} <!-- 📸 Photo yahan load hogi -->
         <div class="recipe-header">
           <h2>${r.dish || ''}</h2>
           <div class="recipe-meta">
@@ -399,15 +315,8 @@ Respond with ONLY this raw JSON object, no markdown, no explanation:
           </div>
         </div>
       </div>`;
-
-      // Agar photo hai, toh use slow load hone ke baad show karo (smooth effect)
-      const img = document.getElementById('recipeImage');
-      if(img) {
-          img.onload = function() {
-              this.style.display = 'block';
-          }
-      }
   }
 </script>
+
 </body>
 </html>
