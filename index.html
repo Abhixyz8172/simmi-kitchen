@@ -176,7 +176,7 @@
 <div class="container">
   <div class="header">
     <div class="header-logo">👩‍🍳</div>
-    <h1>Simmi's Kitchen</h1>
+    <h1>Bhawna's Kitchen</h1>
     <p>Premium Recipes & Step-by-Step Cooking Guides</p>
   </div>
 
@@ -241,7 +241,7 @@ If dish: {"type":"dish","dish":"Full dish name","time":"40 mins","servings":"4 p
 
     document.getElementById('resultArea').innerHTML = `
       <div class="suggest-panel">
-        <h4>👩‍🍳 Simmi boli — "${query}" se ye dishes banti hain, kaunsi banani hai?</h4>
+        <h4>👩‍🍳 Bhawna boli — "${query}" se ye dishes banti hain, kaunsi banani hai?</h4>
         <div class="suggest-grid">${btns}</div>
       </div>`;
   }
@@ -252,7 +252,7 @@ If dish: {"type":"dish","dish":"Full dish name","time":"40 mins","servings":"4 p
     document.getElementById('resultArea').innerHTML =
       '<div class="state-message"><div class="loading-spinner">🍳</div><br>Chef Simmi recipe bana rahi hai...</div>';
 
-    const prompt = `You are Chef Simmi, a warm Indian cooking expert. Make a complete recipe for: "${dishName}".
+    const prompt = `You are Chef Bhawna, a warm Indian cooking expert. Make a complete recipe for: "${dishName}".
 Respond ONLY JSON:
 {"dish":"full dish name","time":"total time","servings":"number of servings","simmi_intro":"warm Hinglish welcome","ingredients":["ingredient with quantity"],"steps":["detailed step"],"simmi_tip":"one secret chef tip in Hinglish"}`;
 
@@ -290,7 +290,7 @@ Respond ONLY JSON:
 
     document.getElementById('resultArea').innerHTML = `
       <div class="simmi-bubble">
-        <h4>👩‍🍳 Chef Simmi Says</h4>
+        <h4>👩‍🍳 Chef bhawna Says</h4>
         <p>"${r.simmi_intro || ''}"</p>
       </div>
       <div class="recipe-card">
