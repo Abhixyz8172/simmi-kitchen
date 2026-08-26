@@ -280,6 +280,7 @@ Respond ONLY JSON:
     return data;
   }
 
+  
   function renderRecipe(r) {
     const ingsHTML = (r.ingredients || []).map(ing => `<div class="ing-item">• ${ing}</div>`).join('');
     const stepsHTML = (r.steps || []).map((s, i) => `
